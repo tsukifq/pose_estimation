@@ -120,10 +120,10 @@ def run(estimation_model: str, tracker_type: str, classification_model: str,
     # Add the current list_persons to the history
     list_persons_history.append(list_persons)
 
-    person = list_persons[0]
-    nose = person.keypoints[0]
-    cv2.putText(image, 'Nose: ' + str(nose.y), (left_margin, 2 * row_size), cv2.FONT_HERSHEY_PLAIN,
-                font_size, text_color, font_thickness)
+    # person = list_persons[0]
+    # nose = person.keypoints[0]
+    # cv2.putText(image, 'Nose: ' + str(nose.y), (left_margin, 2 * row_size), cv2.FONT_HERSHEY_PLAIN,
+    #             font_size, text_color, font_thickness)
 
     # In the run function, call analyze_pose after detecting the pose
     count, correction_info = analyze.analyze(list_persons_history, action)
