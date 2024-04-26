@@ -76,7 +76,7 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if len(valleys) > 0 and is_standing and abs(peek_nose_y - valley_nose_y) > abs(threshold):
+      if len(valleys) > 0 and is_standing:
         print(1)
 
         action_count += 1
