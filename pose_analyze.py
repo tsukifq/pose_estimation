@@ -99,6 +99,7 @@ def analyze(list_persons_history, action):
   """
   action_count = 0
   correction_info = 'No correction info'
+  print("analyze" + action)
 
   if action == "squat":
     action_count, correction_info = squat_count(list_persons_history)
