@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import find_peaks
 import math
 
-is_standing = True  # Initialize the global state
+is_standing = False  # Initialize the global state
 valley_nose_y = None  # Initialize the global state
 peek_nose_y = None  # Initialize the global state
 threshold = 30  # Initialize the global state
@@ -35,7 +35,25 @@ def is_person_standing(person, valley_nose_y):
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
     if abs(valley_nose_y - nose.y) > abs(threshold):
-        print("yes")
+        return True
+    else:
+        return False
+    
+def is_person_squating(person, peek_nose_y):
+    if peek_nose_y is None:
+        return False
+    """Determine whether a person is standing based on the keypoints."""
+    # Get the keypoints
+    nose = person.keypoints[0].coordinate
+    left_knee = person.keypoints[13].coordinate
+    right_knee = person.keypoints[14].coordinate
+    left_ankle = person.keypoints[15].coordinate
+    right_ankle = person.keypoints[16].coordinate
+
+    print("threshold:" + str(threshold), "previous:" + str(peek_nose_y), "nose:" + str(nose.y))
+    # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
+    # 
+    if abs(peek_nose_y - nose.y) > abs(threshold):
         return True
     else:
         return False
@@ -50,6 +68,7 @@ def squat_count(list_persons_history):
   correction_info = 'No correction info'
   global valley_nose_y  # Initialize the previous nose y coordinate
   global peek_nose_y  # Initialize the previous nose y coordinate
+
   previous_knee_y = None  # Initialize the previous knee y coordinate
 
   # For each pose in the history
@@ -62,7 +81,10 @@ def squat_count(list_persons_history):
     # if person.action == action:
     nose = person.keypoints[0].coordinate
     nose_y_coordinates.append(nose.y)
-    # print(nose.y)
+    if valley_nose_y == None:
+      valley_nose_y = nose.y
+    if peek_nose_y == None:
+      peek_nose_y = nose.y
 
     # Save the y coordinate of the knees
     left_knee = person.keypoints[13].coordinate
@@ -76,11 +98,10 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if len(valleys) > 0 and is_standing:
+      if len(valleys) > 0 and is_person_squating(person, peek_nose_y):
         print(1)
 
         action_count += 1
-        is_standing = False
         valley_nose_y = nose.y
         # Analyze the squat here
         # Calculate the angles of the knees and hips
@@ -98,7 +119,6 @@ def squat_count(list_persons_history):
         break
       elif len(peeks) > 0 and is_person_standing(person, valley_nose_y):
         peek_nose_y = nose.y
-        is_standing = True
 
   return action_count, correction_info
 
