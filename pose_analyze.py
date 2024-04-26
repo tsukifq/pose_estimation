@@ -48,6 +48,7 @@ def squat_count(list_persons_history):
     # Get the person
     person = list_persons[0]
 
+    flag = False
     # If the person is performing the target action
     # if person.action == action:
     nose = person.keypoints[0].coordinate
@@ -66,6 +67,7 @@ def squat_count(list_persons_history):
 
       # If a valley is found, increment the count and analyze the squat
       if len(valleys) > 0 and is_standing:
+        flag = True
         action_count += 1
         is_standing = False
         previous_nose_y = nose.y
@@ -81,10 +83,12 @@ def squat_count(list_persons_history):
             correction_info = 'You are squatting too low.'
           else:
             correction_info = 'You are squatting too high.'
-        list_persons_history.clear()
+        
       # elif is_person_standing(person, previous_nose_y):
         is_standing = True
-
+    
+    if flag:
+       list_persons_history.clear()
 
   return action_count, correction_info
 
