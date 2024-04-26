@@ -15,6 +15,8 @@ def calculate_angle(a, b, c):
     return np.degrees(angle)
 
 def is_person_standing(person, previous_nose_y):
+    if previous_nose_y is None:
+        return False
     """Determine whether a person is standing based on the keypoints."""
     # Get the keypoints
     nose = person.keypoints[0].coordinate
