@@ -33,6 +33,8 @@ def is_person_standing(person, previous_nose_y):
         return False
 
 def squat_count(list_persons_history):
+  global is_standing  # Add this line
+
   # Initialize a list to store the y coordinates of the nose keypoint
   nose_y_coordinates = []
   knee_y_coordinates = []  # Initialize a list to store the y coordinates of the knee keypoints
@@ -69,9 +71,9 @@ def squat_count(list_persons_history):
         previous_nose_y = nose.y
         # Analyze the squat here
         # Calculate the angles of the knees and hips
-        left_knee_angle = calculate_angle(person.keypoints[11].coordinate, person.keypoints[13].coordinate, person.keypoints[15].coordinate)
-        right_knee_angle = calculate_angle(person.keypoints[12].coordinate, person.keypoints[14].coordinate, person.keypoints[16].coordinate)
-        hip_angle = calculate_angle(person.keypoints[5].coordinate, person.keypoints[11].coordinate, person.keypoints[13].coordinate)
+        left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
+        right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
+        hip_angle = calculate_angle(person.keypoints[5].coordinate.y, person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y)
 
         # If the angles are not within a certain range, add a correction suggestion to the correction_info
         if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100 and 80 <= hip_angle <= 100):
