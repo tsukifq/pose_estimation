@@ -73,6 +73,7 @@ def squat_count(list_persons_history):
 
       # If a valley is found, increment the count and analyze the squat
       if len(valleys) > 0 and is_standing:
+        print(1)
         flag = True
         action_count += 1
         is_standing = False
