@@ -49,9 +49,7 @@ def squat_count(list_persons_history):
     # If the person is performing the target action
     # if person.action == action:
     nose = person.keypoints[0]
-    print(nose.y)
     nose_y_coordinates.append(nose.y)
-    print(len(nose_y_coordinates))
 
     # Save the y coordinate of the knees
     left_knee = person.keypoints[13]
