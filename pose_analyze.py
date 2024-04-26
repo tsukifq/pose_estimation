@@ -89,6 +89,8 @@ def squat_count(list_persons_history):
     
     if flag:
        list_persons_history.clear()
+       flag = False
+       break
 
   return action_count, correction_info
 
