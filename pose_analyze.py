@@ -80,7 +80,7 @@ def squat_count(list_persons_history):
           else:
             correction_info = 'You are squatting too high.'
         list_persons_history.clear()
-      elif is_person_standing(person, previous_nose_y):
+      # elif is_person_standing(person, previous_nose_y):
         is_standing = True
 
 
