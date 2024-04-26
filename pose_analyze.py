@@ -28,9 +28,9 @@ def is_person_standing(person, previous_nose_y):
 
     # Define the threshold for the y coordinate change
     threshold = ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2
-    print("threshold:" + threshold)
-    print("previous:" + previous_nose_y)
-    print("nose:" + nose.y)
+    print("threshold:" + str(threshold))
+    print("previous:" + str(previous_nose_y))
+    print("nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     if nose.y < previous_nose_y - threshold:
         return True
