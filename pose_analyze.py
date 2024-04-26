@@ -28,11 +28,11 @@ def is_person_standing(person, previous_nose_y):
 
     # Define the threshold for the y coordinate change
     threshold = ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2
-    # print("threshold:" + str(threshold), "previous:" + str(previous_nose_y), "nose:" + str(nose.y))
+    print("threshold:" + str(threshold), "previous:" + str(previous_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
     if abs(previous_nose_y - nose.y) > abs(threshold):
-        # print("yes")
+        print("yes")
         return True
     else:
         return False
@@ -69,6 +69,7 @@ def squat_count(list_persons_history):
     if len(nose_y_coordinates) > 2:
       # Find the valleys in the last three y coordinates
       valleys, _ = find_peaks(-np.array(nose_y_coordinates[-3:]))
+      peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
       if len(valleys) > 0 and is_standing:
@@ -89,7 +90,7 @@ def squat_count(list_persons_history):
           else:
             correction_info = 'You are squatting too high.'
         
-      elif is_person_standing(person, previous_nose_y):
+      elif len(peeks) > 0 and is_person_standing(person, previous_nose_y):
         is_standing = True
     
     if flag:
