@@ -99,8 +99,9 @@ def analyze(list_persons_history, action):
   """
   action_count = 0
   correction_info = 'No correction info'
-  print("analyze" + action)
+  print(f"Action: '{action}', type: {type(action)}")
 
   if action == "squat":
+    print(1)
     action_count, correction_info = squat_count(list_persons_history)
   return action_count, correction_info
