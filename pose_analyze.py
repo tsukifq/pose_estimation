@@ -3,6 +3,7 @@ from scipy.signal import find_peaks
 import math
 
 is_standing = False  # Initialize the global state
+is_squating = True  # Initialize the global state
 valley_nose_y = None  # Initialize the global state
 peek_nose_y = None  # Initialize the global state
 threshold = 30  # Initialize the global state
@@ -34,7 +35,11 @@ def is_person_standing(person, valley_nose_y):
     print("threshold:" + str(threshold), "previous:" + str(valley_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
+    global is_squating
+    global is_standing
     if abs(valley_nose_y - nose.y) > abs(threshold):
+        is_standing = True
+        is_squating = False
         return True
     else:
         return False
@@ -53,13 +58,16 @@ def is_person_squating(person, peek_nose_y):
     print("threshold:" + str(threshold), "previous:" + str(peek_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
+    global is_standing
+    global is_squating
     if abs(peek_nose_y - nose.y) > abs(threshold):
+        is_squating = True
+        is_standing = False
         return True
     else:
         return False
 
 def squat_count(list_persons_history):
-  global is_standing  # Add this line
 
   # Initialize a list to store the y coordinates of the nose keypoint
   nose_y_coordinates = []
@@ -98,7 +106,7 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if len(valleys) > 0 and is_person_squating(person, peek_nose_y):
+      if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y):
         print(1)
 
         action_count += 1
@@ -117,7 +125,7 @@ def squat_count(list_persons_history):
         
         list_persons_history.clear()
         break
-      elif len(peeks) > 0 and is_person_standing(person, valley_nose_y):
+      elif is_squating and len(peeks) > 0 and is_person_standing(person, valley_nose_y):
         peek_nose_y = nose.y
 
   return action_count, correction_info
