@@ -17,11 +17,11 @@ def calculate_angle(a, b, c):
 def is_person_standing(person, previous_nose_y):
     """Determine whether a person is standing based on the keypoints."""
     # Get the keypoints
-    nose = person.keypoints[0]
-    left_knee = person.keypoints[13]
-    right_knee = person.keypoints[14]
-    left_ankle = person.keypoints[15]
-    right_ankle = person.keypoints[16]
+    nose = person.keypoints[0].point
+    left_knee = person.keypoints[13].point
+    right_knee = person.keypoints[14].point
+    left_ankle = person.keypoints[15].point
+    right_ankle = person.keypoints[16].point
 
     # Define the threshold for the y coordinate change
     threshold = ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2
@@ -48,13 +48,13 @@ def squat_count(list_persons_history):
 
     # If the person is performing the target action
     # if person.action == action:
-    nose = person.keypoints[0]
+    nose = person.keypoints[0].point
     nose_y_coordinates.append(nose.y)
     print(nose.y)
 
     # Save the y coordinate of the knees
-    left_knee = person.keypoints[13]
-    right_knee = person.keypoints[14]
+    left_knee = person.keypoints[13].point
+    right_knee = person.keypoints[14].point
     knee_y_coordinates.append((left_knee.y + right_knee.y) / 2)
 
     # If we have enough data to analyze
@@ -69,9 +69,9 @@ def squat_count(list_persons_history):
         previous_nose_y = nose.y
         # Analyze the squat here
         # Calculate the angles of the knees and hips
-        left_knee_angle = calculate_angle(person.keypoints[11], person.keypoints[13], person.keypoints[15])
-        right_knee_angle = calculate_angle(person.keypoints[12], person.keypoints[14], person.keypoints[16])
-        hip_angle = calculate_angle(person.keypoints[5], person.keypoints[11], person.keypoints[13])
+        left_knee_angle = calculate_angle(person.keypoints[11].point, person.keypoints[13].point, person.keypoints[15].point)
+        right_knee_angle = calculate_angle(person.keypoints[12].point, person.keypoints[14].point, person.keypoints[16].point)
+        hip_angle = calculate_angle(person.keypoints[5].point, person.keypoints[11].point, person.keypoints[13].point)
 
         # If the angles are not within a certain range, add a correction suggestion to the correction_info
         if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100 and 80 <= hip_angle <= 100):
@@ -99,7 +99,6 @@ def analyze(list_persons_history, action):
   """
   action_count = 0
   correction_info = 'No correction info'
-  print(f"Action: '{action}', type: {type(action)}")
 
   if action == "squat":
     print(1)
