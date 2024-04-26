@@ -3,6 +3,7 @@ from scipy.signal import find_peaks
 import math
 
 is_standing = True  # Initialize the global state
+previous_nose_y = None  # Initialize the global state
 
 def calculate_angle(a, b, c):
     """Calculate the angle between the vectors from a to b and from b to c."""
@@ -15,6 +16,7 @@ def calculate_angle(a, b, c):
     return np.degrees(angle)
 
 def is_person_standing(person, previous_nose_y):
+    print(1)
     if previous_nose_y is None:
         return False
     """Determine whether a person is standing based on the keypoints."""
@@ -42,7 +44,7 @@ def squat_count(list_persons_history):
   knee_y_coordinates = []  # Initialize a list to store the y coordinates of the knee keypoints
   action_count = 0
   correction_info = 'No correction info'
-  previous_nose_y = None  # Initialize the previous nose y coordinate
+  global previous_nose_y  # Initialize the previous nose y coordinate
   previous_knee_y = None  # Initialize the previous knee y coordinate
 
   # For each pose in the history
