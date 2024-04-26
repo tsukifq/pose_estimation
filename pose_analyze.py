@@ -49,7 +49,9 @@ def squat_count(list_persons_history):
     # If the person is performing the target action
     # if person.action == action:
     nose = person.keypoints[0]
+    print(nose.y)
     nose_y_coordinates.append(nose.y)
+    print(len(nose_y_coordinates))
 
     # Save the y coordinate of the knees
     left_knee = person.keypoints[13]
@@ -64,6 +66,7 @@ def squat_count(list_persons_history):
       # If a valley is found, increment the count and analyze the squat
       if len(valleys) > 0 and is_standing:
         action_count += 1
+        is_standing = False
         previous_nose_y = nose.y
         # Analyze the squat here
         # Calculate the angles of the knees and hips

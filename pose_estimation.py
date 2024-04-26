@@ -72,7 +72,7 @@ def run(estimation_model: str, tracker_type: str, classification_model: str,
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
   # Set the desired FPS
-  desired_fps = 15
+  desired_fps = 10
   cap.set(cv2.CAP_PROP_FPS, desired_fps)
 
   # Visualization parameters
