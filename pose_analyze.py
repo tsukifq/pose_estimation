@@ -3,7 +3,9 @@ from scipy.signal import find_peaks
 import math
 
 is_standing = True  # Initialize the global state
-previous_nose_y = None  # Initialize the global state
+valley_nose_y = None  # Initialize the global state
+peek_nose_y = None  # Initialize the global state
+threshold = 30  # Initialize the global state
 
 def calculate_angle(a, b, c):
     """Calculate the angle between the vectors from a to b and from b to c."""
@@ -15,8 +17,8 @@ def calculate_angle(a, b, c):
 
     return np.degrees(angle)
 
-def is_person_standing(person, previous_nose_y):
-    if previous_nose_y is None:
+def is_person_standing(person, valley_nose_y):
+    if valley_nose_y is None:
         return False
     """Determine whether a person is standing based on the keypoints."""
     # Get the keypoints
@@ -27,11 +29,12 @@ def is_person_standing(person, previous_nose_y):
     right_ankle = person.keypoints[16].coordinate
 
     # Define the threshold for the y coordinate change
-    threshold = ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2
-    print("threshold:" + str(threshold), "previous:" + str(previous_nose_y), "nose:" + str(nose.y))
+    global threshold
+    threshold = max(threshold, ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2)
+    print("threshold:" + str(threshold), "previous:" + str(valley_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
-    if abs(previous_nose_y - nose.y) > abs(threshold):
+    if abs(valley_nose_y - nose.y) > abs(threshold):
         print("yes")
         return True
     else:
@@ -45,7 +48,8 @@ def squat_count(list_persons_history):
   knee_y_coordinates = []  # Initialize a list to store the y coordinates of the knee keypoints
   action_count = 0
   correction_info = 'No correction info'
-  global previous_nose_y  # Initialize the previous nose y coordinate
+  global valley_nose_y  # Initialize the previous nose y coordinate
+  global peek_nose_y  # Initialize the previous nose y coordinate
   previous_knee_y = None  # Initialize the previous knee y coordinate
 
   # For each pose in the history
@@ -72,32 +76,29 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if len(valleys) > 0 and is_standing:
+      if len(valleys) > 0 and is_standing and abs(peek_nose_y - valley_nose_y) > abs(threshold):
         print(1)
-        flag = True
+
         action_count += 1
         is_standing = False
-        previous_nose_y = nose.y
+        valley_nose_y = nose.y
         # Analyze the squat here
         # Calculate the angles of the knees and hips
         left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
         right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
-        hip_angle = calculate_angle(person.keypoints[5].coordinate.y, person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y)
 
         # If the angles are not within a certain range, add a correction suggestion to the correction_info
-        if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100 and 80 <= hip_angle <= 100):
-          if left_knee_angle < 80 or right_knee_angle < 80 or hip_angle < 80:
+        if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100):
+          if left_knee_angle < 80 or right_knee_angle < 80:
             correction_info = 'You are squatting too low.'
           else:
             correction_info = 'You are squatting too high.'
         
-      elif len(peeks) > 0 and is_person_standing(person, previous_nose_y):
+        list_persons_history.clear()
+        break
+      elif len(peeks) > 0 and is_person_standing(person, valley_nose_y):
+        peek_nose_y = nose.y
         is_standing = True
-    
-    if flag:
-       list_persons_history.clear()
-       flag = False
-       break
 
   return action_count, correction_info
 
