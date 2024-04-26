@@ -25,7 +25,7 @@ def is_person_standing(person, previous_nose_y):
 
     # Define the threshold for the y coordinate change
     threshold = ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2
-
+    print(threshold)
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     if nose.y < previous_nose_y - threshold:
         return True
@@ -53,7 +53,7 @@ def squat_count(list_persons_history):
     # if person.action == action:
     nose = person.keypoints[0].coordinate
     nose_y_coordinates.append(nose.y)
-    print(nose.y)
+    # print(nose.y)
 
     # Save the y coordinate of the knees
     left_knee = person.keypoints[13].coordinate
