@@ -4,8 +4,8 @@ import math
 
 is_standing = False  # Initialize the global state
 is_squating = True  # Initialize the global state
-valley_nose_y = None  # Initialize the global state
-peek_nose_y = None  # Initialize the global state
+valley_nose_y = 0  # Initialize the global state
+peek_nose_y = 240  # Initialize the global state
 threshold = 50  # Initialize the global state
 
 def calculate_angle(a, b, c):
