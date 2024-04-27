@@ -7,6 +7,7 @@ is_squating = True  # Initialize the global state
 valley_nose_y = 0  # Initialize the global state
 peek_nose_y = 240  # Initialize the global state
 threshold = 50  # Initialize the global state
+flag = True
 
 def calculate_angle(a, b, c):
     """Calculate the angle between the vectors from a to b and from b to c."""
@@ -84,7 +85,6 @@ def squat_count(list_persons_history):
     # Get the person
     person = list_persons[0]
 
-    flag = False
     # If the person is performing the target action
     # if person.action == action:
     nose = person.keypoints[0].coordinate
@@ -108,21 +108,25 @@ def squat_count(list_persons_history):
       # If a valley is found, increment the count and analyze the squat
       if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y, valley_nose_y):
         print(1)
+        if flag:
+          action_count += 1
+          flag = False
+          
+          valley_nose_y = nose.y
+          # Analyze the squat here
+          # Calculate the angles of the knees and hips
+          left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
+          right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
 
-        action_count += 1
-        valley_nose_y = nose.y
-        # Analyze the squat here
-        # Calculate the angles of the knees and hips
-        left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
-        right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
+          # If the angles are not within a certain range, add a correction suggestion to the correction_info
+          if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100):
+            if left_knee_angle < 80 or right_knee_angle < 80:
+              correction_info = 'You are squatting too low.'
+            else:
+              correction_info = 'You are squatting too high.'
+        else:
+          flag = True
 
-        # If the angles are not within a certain range, add a correction suggestion to the correction_info
-        if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100):
-          if left_knee_angle < 80 or right_knee_angle < 80:
-            correction_info = 'You are squatting too low.'
-          else:
-            correction_info = 'You are squatting too high.'
-        
         list_persons_history.clear()
         break
       elif is_squating and len(peeks) > 0 and is_person_standing(person, valley_nose_y):
