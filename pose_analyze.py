@@ -6,7 +6,7 @@ is_standing = False  # Initialize the global state
 is_squating = True  # Initialize the global state
 valley_nose_y = None  # Initialize the global state
 peek_nose_y = None  # Initialize the global state
-threshold = 30  # Initialize the global state
+threshold = 50  # Initialize the global state
 
 def calculate_angle(a, b, c):
     """Calculate the angle between the vectors from a to b and from b to c."""
@@ -31,13 +31,13 @@ def is_person_standing(person, valley_nose_y):
 
     # Define the threshold for the y coordinate change
     global threshold
-    threshold = max(threshold, ((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2)
-    print("threshold:" + str(threshold), "previous:" + str(valley_nose_y), "nose:" + str(nose.y))
+    threshold = max(threshold, abs((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2)
+    print("threshold:" + str(threshold), "valley:" + str(valley_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
     global is_squating
     global is_standing
-    if abs(valley_nose_y - nose.y) > abs(threshold):
+    if valley_nose_y - nose.y > threshold:
         is_standing = True
         is_squating = False
         return True
@@ -55,12 +55,12 @@ def is_person_squating(person, peek_nose_y):
     left_ankle = person.keypoints[15].coordinate
     right_ankle = person.keypoints[16].coordinate
 
-    print("threshold:" + str(threshold), "previous:" + str(peek_nose_y), "nose:" + str(nose.y))
+    print("threshold:" + str(threshold), "peek:" + str(peek_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
     global is_standing
     global is_squating
-    if abs(peek_nose_y - nose.y) > abs(threshold):
+    if nose.y - peek_nose_y > abs(threshold):
         is_squating = True
         is_standing = False
         return True
