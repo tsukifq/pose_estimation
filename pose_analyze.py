@@ -44,7 +44,7 @@ def is_person_standing(person, valley_nose_y):
     else:
         return False
     
-def is_person_squating(person, peek_nose_y):
+def is_person_squating(person, peek_nose_y, valley_nose_y):
     if peek_nose_y is None:
         return False
     """Determine whether a person is standing based on the keypoints."""
@@ -60,7 +60,7 @@ def is_person_squating(person, peek_nose_y):
     # 
     global is_standing
     global is_squating
-    if peek_nose_y - nose.y > abs(threshold):
+    if peek_nose_y - nose.y > threshold and nose.y - valley_nose_y < threshold:
         is_squating = True
         is_standing = False
         return True
@@ -106,7 +106,7 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y):
+      if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y, valley_nose_y):
         print(1)
 
         action_count += 1
