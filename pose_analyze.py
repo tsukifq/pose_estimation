@@ -60,7 +60,7 @@ def is_person_squating(person, peek_nose_y, valley_nose_y):
     # 
     global is_standing
     global is_squating
-    if peek_nose_y - nose.y > threshold and nose.y - valley_nose_y < threshold:
+    if peek_nose_y - nose.y > threshold:
         is_squating = True
         is_standing = False
         return True

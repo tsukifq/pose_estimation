@@ -127,8 +127,13 @@ def run(estimation_model: str, tracker_type: str, classification_model: str,
 
     # In the run function, call analyze_pose after detecting the pose
     count, correction_info = analyze.analyze(list_persons_history, action)
+    flag = True
     if count == 1:
-      action_count += 1
+      if flag == False:
+        action_count += 1
+        flag = True
+      else:
+        flag = False  
     # Display the action count and correction info on the image
     action_count_text = 'Action count: ' + str(action_count)
     correction_info_text = 'Correction: ' + correction_info
