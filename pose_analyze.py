@@ -60,7 +60,7 @@ def is_person_squating(person, peek_nose_y):
     left_ankle = person.keypoints[15].coordinate
     right_ankle = person.keypoints[16].coordinate
 
-    print("threshold:" + str(threshold), "peek:" + str(peek_nose_y), "nose:" + str(nose.y))
+    print("threshold:" + str(threshold), "peek:" + str(peek_nose_y), "nose:" + str(nose.y), "rec:" + str(rec_nose_y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
     # 
     global is_standing
