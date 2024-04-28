@@ -5,7 +5,7 @@ import math
 # Initialize the global state
 is_standing = False  
 is_squating = True 
-valley_nose_y = 0
+valley_nose_y = -240
 peek_nose_y = 240 
 rec_nose_y = 0 
 threshold = 50 
