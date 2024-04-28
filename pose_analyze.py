@@ -2,11 +2,13 @@ import numpy as np
 from scipy.signal import find_peaks
 import math
 
-is_standing = False  # Initialize the global state
-is_squating = True  # Initialize the global state
-valley_nose_y = 0  # Initialize the global state
-peek_nose_y = 240  # Initialize the global state
-threshold = 50  # Initialize the global state
+# Initialize the global state
+is_standing = False  
+is_squating = True 
+valley_nose_y = 0
+peek_nose_y = 240 
+rec_nose_y = 0 
+threshold = 50 
 flag = True
 
 def calculate_angle(a, b, c):
@@ -32,6 +34,7 @@ def is_person_standing(person, valley_nose_y):
 
     # Define the threshold for the y coordinate change
     global threshold
+    global rec_nose_y
     threshold = max(threshold, abs((left_knee.y - left_ankle.y) + (right_knee.y - right_ankle.y)) // 2)
     print("threshold:" + str(threshold), "valley:" + str(valley_nose_y), "nose:" + str(nose.y))
     # If the y coordinates of the knees are higher than the ankles and the y coordinate of the nose and knees are higher than the previous ones by a certain threshold, the person is standing
@@ -39,13 +42,14 @@ def is_person_standing(person, valley_nose_y):
     global is_squating
     global is_standing
     if nose.y - valley_nose_y > threshold:
+        rec_nose_y = nose.y
         is_standing = True
         is_squating = False
         return True
     else:
         return False
     
-def is_person_squating(person, peek_nose_y, valley_nose_y):
+def is_person_squating(person, peek_nose_y):
     if peek_nose_y is None:
         return False
     """Determine whether a person is standing based on the keypoints."""
@@ -61,7 +65,8 @@ def is_person_squating(person, peek_nose_y, valley_nose_y):
     # 
     global is_standing
     global is_squating
-    if peek_nose_y - nose.y > threshold:
+    global rec_nose_y
+    if peek_nose_y - nose.y > threshold and nose.y > rec_nose_y:
         is_squating = True
         is_standing = False
         return True
@@ -106,26 +111,22 @@ def squat_count(list_persons_history):
       peeks, _ = find_peaks(np.array(nose_y_coordinates[-3:]))
 
       # If a valley is found, increment the count and analyze the squat
-      if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y, valley_nose_y):
+      if is_standing and len(valleys) > 0 and is_person_squating(person, peek_nose_y):
         print(1)
-        if flag:
-          action_count += 1
-          flag = False
-          
-          valley_nose_y = nose.y
-          # Analyze the squat here
-          # Calculate the angles of the knees and hips
-          left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
-          right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
+        action_count += 1
 
-          # If the angles are not within a certain range, add a correction suggestion to the correction_info
-          if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100):
-            if left_knee_angle < 80 or right_knee_angle < 80:
-              correction_info = 'You are squatting too low.'
-            else:
-              correction_info = 'You are squatting too high.'
-        else:
-          flag = True
+        valley_nose_y = nose.y
+        # Analyze the squat here
+        # Calculate the angles of the knees and hips
+        left_knee_angle = calculate_angle(person.keypoints[11].coordinate.y, person.keypoints[13].coordinate.y, person.keypoints[15].coordinate.y)
+        right_knee_angle = calculate_angle(person.keypoints[12].coordinate.y, person.keypoints[14].coordinate.y, person.keypoints[16].coordinate.y)
+
+        # If the angles are not within a certain range, add a correction suggestion to the correction_info
+        if not (80 <= left_knee_angle <= 100 and 80 <= right_knee_angle <= 100):
+          if left_knee_angle < 80 or right_knee_angle < 80:
+            correction_info = 'You are squatting too low.'
+          else:
+            correction_info = 'You are squatting too high.'
 
         list_persons_history.clear()
         break
